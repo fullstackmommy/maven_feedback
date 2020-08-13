@@ -76,4 +76,14 @@ public class FeedbackRepositoryTest {
 
         Assertions.assertFalse(feedback.isPresent(), "Feedback for product 8 should not exist");
     }
+
+    @Test
+    @DisplayName("Save a new feedback")
+    public void testSavingNewFeedback(){
+        Feedback newFeedback = new Feedback("4", 2, 1, "POSTED", "This product is great!");
+
+        Feedback savedFeedback = feedbackRepository.save(newFeedback);
+
+        Assertions.assertEquals(1, savedFeedback.getVersion().intValue());
+    }
 }
