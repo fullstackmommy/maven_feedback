@@ -64,4 +64,24 @@ public class FeedbackController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @DeleteMapping("/feedback/{id}")
+    public ResponseEntity<?> deleteFeedback(@PathVariable String id) {
+        LOGGER.info("Deleting feedback with id:{}", id);
+
+        return feedbackService.findById(id)
+                .map(feedback -> {
+                    try {
+                        feedbackService.delete(id);
+                        return ResponseEntity
+                            .ok()
+                            .location(new URI("/feedback/" + id))
+                            .eTag(Integer.toString(feedback.getVersion()))
+                            .body(feedback);
+                    } catch (URISyntaxException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                    }
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

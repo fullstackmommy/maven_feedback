@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -104,5 +105,25 @@ public class FeedbackControllerTest {
                 .andExpect(jsonPath("$.id", is("1")))
                 .andExpect(jsonPath("$.status", is("POSTED")))
                 .andExpect(jsonPath("$.version", is(1)));
+    }
+
+    @Test
+    @DisplayName("Delete a feedback with success - DELETE /feedback/1")
+    public void testProductDeletedSuccessfully() throws Exception {
+        Feedback existingFeedback = new Feedback("1", 1, 1, "POSTED", "This product is great!");
+
+        doReturn(Optional.of(existingFeedback)).when(feedbackService).findById(existingFeedback.getId());
+
+        mockMvc.perform(delete("/feedback/{id}", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Fail to delete a non-existing feedback - DELETE /feedback/1")
+    public void testFailureToDeleteNonExistingProduct() throws Exception {
+        doReturn(null).when(feedbackService).findById("1");
+
+        mockMvc.perform(delete("/products/{id}", 1))
+                .andExpect(status().isNotFound());
     }
 }
