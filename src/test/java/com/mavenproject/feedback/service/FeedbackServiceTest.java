@@ -101,4 +101,13 @@ public class FeedbackServiceTest {
         Assertions.assertEquals(1, savedFeedback.getVersion().intValue());
     }
 
+    @Test
+    @DisplayName("Delete feedback successfully")
+    public void testDeleteFeedbackSuccessfully() {
+        Feedback mockFeedback = new Feedback("1", 1, 1, "PUBLISHED", 2, "Update: This product is great!");
+
+        doReturn(Optional.of(mockFeedback)).when(feedbackRepository).findById("1");
+
+        feedbackService.delete("1");
+     }
 }

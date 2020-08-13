@@ -30,4 +30,8 @@ public class FeedbackService {
         feedback.setVersion(1);
         return feedbackRepository.save(feedback);
     }
+
+    public void delete(String id) {
+        feedbackRepository.deleteById(id);
+    }
 }
