@@ -41,4 +41,33 @@ public class FeedbackServiceTest {
             Assertions.assertEquals("POSTED", f.getStatus());
         });
     }
+
+    @Test
+    @DisplayName("Find feedback by product id successfully")
+    public void testFindFeedbackByProductId(){
+        Feedback mockFeedback = new Feedback("1", 1, 1, "POSTED", "This product is great!");
+
+        doReturn(Optional.of(mockFeedback)).when(feedbackRepository).findByProductId(1);
+
+        Optional<Feedback> foundFeedback = feedbackService.findByProductId(1);
+
+        Assertions.assertTrue(foundFeedback.isPresent());
+        Assertions.assertNotEquals(Optional.empty(), foundFeedback);
+        foundFeedback.ifPresent(f -> {
+            Assertions.assertEquals("1", f.getId());
+            Assertions.assertEquals("POSTED", f.getStatus());
+            Assertions.assertEquals(1, f.getUserId().intValue());
+        });
+    }
+
+    @Test
+    @DisplayName("Find feedback by id failure")
+    public void testFindFeedbackByIdFailure(){
+        doReturn(Optional.empty()).when(feedbackRepository).findByProductId(1);
+
+        Optional<Feedback> foundFeedback = feedbackService.findByProductId(1);
+
+        Assertions.assertFalse(foundFeedback.isPresent());
+        Assertions.assertEquals(Optional.empty(), foundFeedback);
+    }
 }
