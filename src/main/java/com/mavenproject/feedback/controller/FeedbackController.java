@@ -5,10 +5,15 @@ import com.mavenproject.feedback.service.FeedbackService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -27,5 +32,23 @@ public class FeedbackController {
                 .map(Arrays::asList)
                 .orElseGet(ArrayList::new))
                 .orElse(feedbackService.findAll());
+    }
+
+    @GetMapping("/feedback/{id}")
+    public ResponseEntity<?> getFeedback(@PathVariable String id){
+        LOGGER.info("Searching for feedback with id:{}", id);
+        return feedbackService.findById(id)
+                .map(feedback -> {
+                    try {
+                        return ResponseEntity
+                                .ok()
+                                .location(new URI("/feedback/" + id))
+                                .eTag(Integer.toString(feedback.getVersion()))
+                                .body(feedback);
+                    } catch (URISyntaxException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                    }
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }
