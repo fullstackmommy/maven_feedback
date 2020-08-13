@@ -7,10 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,5 +47,21 @@ public class FeedbackController {
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/feedback")
+    public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback){
+        LOGGER.info("Adding a new feedback for product:{}", feedback.getProductId());
+
+        feedback = feedbackService.save(feedback);
+
+        try {
+            return ResponseEntity
+                    .created(new URI("/feedback/" + feedback.getId()))
+                    .eTag(Integer.toString(feedback.getVersion()))
+                    .body(feedback);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

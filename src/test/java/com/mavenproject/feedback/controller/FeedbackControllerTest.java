@@ -1,10 +1,12 @@
 package com.mavenproject.feedback.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mavenproject.feedback.model.Feedback;
 import com.mavenproject.feedback.service.FeedbackService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,5 +81,28 @@ public class FeedbackControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/feedback/1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Save a new feedback - POST /feedback")
+    public void testSavingNewFeedback() throws Exception{
+        Feedback newFeedback = new Feedback("1", 1, 1, "POSTED", "This product is great!");
+        Feedback mockedFeedback = new Feedback("1", 1, 1, "POSTED", 1, "This product is great!");
+
+        doReturn(mockedFeedback).when(feedbackService).save(ArgumentMatchers.any());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/feedback")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(newFeedback)))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+
+                .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/feedback/1"))
+
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.status", is("POSTED")))
+                .andExpect(jsonPath("$.version", is(1)));
     }
 }

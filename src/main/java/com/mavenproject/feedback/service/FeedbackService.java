@@ -25,4 +25,9 @@ public class FeedbackService {
     public List<Feedback> findAll() {
         return feedbackRepository.findAll();
     }
+
+    public Feedback save(Feedback feedback) {
+        feedback.setVersion(1);
+        return feedbackRepository.save(feedback);
+    }
 }
