@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.doReturn;
@@ -70,4 +72,20 @@ public class FeedbackServiceTest {
         Assertions.assertFalse(foundFeedback.isPresent());
         Assertions.assertEquals(Optional.empty(), foundFeedback);
     }
+
+    @Test
+    @DisplayName("Find all feedback successfully")
+    public void testFindAllFeedback(){
+        Feedback mockFeedback1 = new Feedback("1", 1, 1, "POSTED", "This product is great!");
+        Feedback mockFeedback2 = new Feedback("2", 1, 2, "POSTED", "This product is awesome!");
+
+        doReturn(Arrays.asList(mockFeedback1, mockFeedback2)).when(feedbackRepository).findAll();
+
+        List<Feedback> feedbackList = feedbackService.findAll();
+
+        Assertions.assertNotNull(feedbackList);
+        Assertions.assertEquals(2, feedbackList.size());
+    }
+
+
 }
