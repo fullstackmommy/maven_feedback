@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @DataMongoTest
@@ -50,5 +51,13 @@ public class FeedbackRepositoryTest {
             Assertions.assertEquals(1, f.getUserId().intValue());
             Assertions.assertEquals("POSTED", f.getStatus());
         });
+    }
+
+    @Test
+    @DisplayName("Find all feedback")
+    public void testFindAllFeedback(){
+        List<Feedback> feedbackList = feedbackRepository.findAll();
+
+        Assertions.assertEquals(3, feedbackList.size());
     }
 }
