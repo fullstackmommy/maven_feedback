@@ -60,4 +60,20 @@ public class FeedbackRepositoryTest {
 
         Assertions.assertEquals(3, feedbackList.size());
     }
+
+    @Test
+    @DisplayName("Find feedback by product id")
+    public void testFindFeedbackByProductId(){
+        Optional<Feedback> feedback = feedbackRepository.findByProductId(2);
+
+        Assertions.assertTrue(feedback.isPresent(), "Feedback for product 2 should exist");
+    }
+
+    @Test
+    @DisplayName("Fail to find feedback by product id")
+    public void testFailToFindFeedbackByProductId(){
+        Optional<Feedback> feedback = feedbackRepository.findByProductId(8);
+
+        Assertions.assertFalse(feedback.isPresent(), "Feedback for product 8 should not exist");
+    }
 }
