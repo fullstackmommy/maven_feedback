@@ -87,5 +87,18 @@ public class FeedbackServiceTest {
         Assertions.assertEquals(2, feedbackList.size());
     }
 
+    @Test
+    @DisplayName("Save new feedback successfully")
+    public void testSaveNewFeedback() {
+        Feedback feedbackToSave = new Feedback("1", 1, 1, "POSTED", "This product is great!");
+        Feedback feedbackToReturn = new Feedback("1", 1, 1, "POSTED", "This product is great!");
+
+        doReturn(feedbackToReturn).when(feedbackRepository).save(feedbackToSave);
+
+        Feedback savedFeedback = feedbackService.save(feedbackToSave);
+
+        Assertions.assertNotNull(savedFeedback);
+        Assertions.assertEquals(1, savedFeedback.getVersion().intValue());
+    }
 
 }
