@@ -86,4 +86,14 @@ public class FeedbackRepositoryTest {
 
         Assertions.assertEquals(1, savedFeedback.getVersion().intValue());
     }
+
+    @Test
+    @DisplayName("Delete a feedback")
+    public void testDeleteFeedback(){
+        Feedback existingFeedback = new Feedback("1", 1, 1, "POSTED", 1, "This product is great!");
+
+        feedbackRepository.delete(existingFeedback);
+
+        Assertions.assertEquals(2, feedbackRepository.count());
+    }
 }
